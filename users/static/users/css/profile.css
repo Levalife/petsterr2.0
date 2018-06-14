@@ -1,0 +1,71 @@
+body {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    font-family: Robot;
+    font-size: 14px;
+}
+
+@font-face {
+    font-family: "Robot";
+    src: url("../fonts/Roboto-Regular.ttf") format("truetype");
+}
+
+.left-menu-block {
+    float: left;
+    display: inline-block;
+    width: 20%;
+    height: 100%;
+    background-color: #5d6369;
+}
+
+.right-content-block {
+    display: inline-block;
+    width: 79%;
+    height: 100%;
+
+}
+
+.left-menu-block .logo {
+    color: #ffffff;
+    font-size: 24px;
+    padding: 0 2em;
+    line-height: 3em;
+    vertical-align: middle;
+}
+
+.left-menu-block .logo a {
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.left-menu-block ul {
+    list-style-type: none;
+    display: table;
+    font-family: Robot;
+    color: #ffffff;
+    padding: 0;
+    margin: 2em 0 0 0;
+    width: 100%;
+}
+
+.left-menu-block ul li {
+    padding: 0.5em 3em;
+}
+
+.left-menu-block ul li:hover {
+    /*opacity: 0.7;*/
+    cursor: pointer;
+    background-color: #aaaaaa;
+}
+
+.left-menu-block ul li.active {
+    background-color: #444444;
+}
+
+.right-content-block .tab-title-block {
+    width: 100%;
+    padding: 1.5em 3em;
+}

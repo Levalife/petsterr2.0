@@ -1,0 +1,17 @@
+{% extends 'web/base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block page_title %}
+    {% trans 'News Feed' %}
+{% endblock %}
+
+{% block page_css %}
+        <link rel="stylesheet" href={% static "web/css/feed.css" %}>
+{% endblock %}
+
+{% block page_content %}
+    <div class="container">
+    Hello! This is your news feed! For getting news follow some kennels, catteries or separate animals!
+    </div>
+{% endblock %}

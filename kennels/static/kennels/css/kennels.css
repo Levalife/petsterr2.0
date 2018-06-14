@@ -1,0 +1,47 @@
+.main-content-block {
+    padding: 1em 2em;
+}
+
+.main-content-block .create-kennel-form {
+    display: inline-block;
+}
+
+.main-content-block .create-kennel-form input[type="text"] {
+    padding: 0.5em;
+}
+
+.main-content-block .create-kennel-form select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: darkgrey;
+    color: white;
+    outline: none;
+    padding: 0.5em;
+}
+
+.main-content-block .create-kennel-form input[type="submit"] {
+    padding: 0.5em;
+}
+
+.kennel-filter-block {
+    display: inline-block;
+}
+
+.kennel-filter-block ul {
+    list-style-type: none;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+}
+
+.kennel-filter-block ul li {
+    display: inline-block;
+    text-align: center;
+    padding: 0 3em;
+}
+
+.kennel-block {
+
+}

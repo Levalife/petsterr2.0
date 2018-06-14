@@ -1,0 +1,26 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href={% static "users/css/profile.css" %}>
+
+</head>
+<body>
+<div class="left-menu-block">
+    <div class="logo"><a href="{% url 'web:index' %}">PetsTerr</a></div>
+    <ul>
+        <li class="active">{% trans 'Info' %}</li>
+        <li>{% trans 'Settings' %}</li>
+        <li>{% trans 'My kennels' %}</li>
+        <li>{% trans 'My animals' %}</li>
+    </ul>
+</div>
+<div class="right-content-block">
+    <div class="tab-title-block">{% trans 'Profile' %}</div>
+</div>
+</body>
+</html>

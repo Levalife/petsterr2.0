@@ -1,0 +1,17 @@
+{% extends 'web/base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block page_title %}
+    {% trans 'Main' %}
+{% endblock %}
+
+{% block page_css %}
+        <link rel="stylesheet" href={% static "web/css/index.css" %}>
+{% endblock %}
+
+{% block page_content %}
+    <div class="index-page-content">
+    Hello, world. You're at the kennels/catteries constructorsite.
+    </div>
+{% endblock %}

@@ -1,0 +1,52 @@
+body {
+    position: relative;
+    font-family: Robot;
+}
+
+@font-face {
+    font-family: "Robot";
+    src: url("../fonts/Roboto-Regular.ttf") format("truetype");
+}
+
+.main-menu-block {
+    width: 100%;
+    /*padding: 1em 0;*/
+    font-family: Robot;
+    font-size: 3vh;
+}
+
+.main-menu-block .logo {
+    display: inline-block;
+    padding: 0 3em;
+    font-size: 3.5vh;
+}
+
+.main-menu-block .logo a {
+    text-decoration: none;
+    color: #5d6369;
+}
+
+.main-menu-block ul {
+    float: right;
+    list-style-type: none;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+}
+
+.main-menu-block ul li {
+    display: inline-block;
+    text-align: center;
+    padding: 0 3em;
+}
+
+.main-menu-block ul li a {
+    text-decoration: none;
+    color: #5d6369;
+}
+
+.main-content-block {
+    width: 100%;
+    padding: 1em 0;
+}

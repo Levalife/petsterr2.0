@@ -1,0 +1,53 @@
+{% extends 'web/base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block page_title %}
+    {% trans 'Kennels and catteries' %}
+{% endblock %}
+{% block page_css %}
+    <link rel="stylesheet" href="{% static 'kennels/css/kennels.css' %}">
+{% endblock %}
+{% block page_content %}
+    {% if user.is_authenticated %}
+        {% if form.errors %}
+            {% for field in form.fields %}
+                {% for error in field.errors %}
+
+                    <p><strong>{{ error|escape }}</strong></p>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+
+        <form class="create-kennel-form" action="{% url 'kennels:kennels_page' %}" method="post">
+            {% csrf_token %}
+
+            {{ form.title }}
+            {{ form.type }}
+
+{#            <p><select name="type">#}
+{#                <option>Select kennel or cattery</option>#}
+{#                <option value="dogs">Kennel</option>#}
+{#                <option value="cats">Cattery</option>#}
+{#            </select>#}
+
+                <input type="submit" value="Create"/>
+        </form>
+    {% else %}
+        <a href="{% url 'users:login_page' %}">Create your own kennel or cattery site</a>
+    {% endif %}
+    <div class="kennel-filter-block">
+        <ul>
+            <li>{% trans 'Filter by' %}:</li>
+        <li>Type</li>
+        <li>Breed</li>
+        <li>Country</li>
+    </ul></div>
+    {% if kennels_list %}
+        {% for kennel in kennels_list %}
+            <div class="kennel-block"><a href="{% url 'kennels:kennel_page' kennel.slug %}"> {{ kennel.title }}</a>
+            </div>
+
+        {% endfor %}
+    {% endif %}
+{% endblock %}

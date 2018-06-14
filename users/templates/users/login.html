@@ -1,0 +1,30 @@
+{% extends 'web/base.html' %}
+{% load i18n %}
+
+{% block page_title %}
+    {% trans 'Log In' %}
+{% endblock %}
+
+{% block page_content %}
+<form id="loginForm" method="post">
+    {% csrf_token %}
+    {{ form.username.label }}: {{ form.username }} <br/>
+    {{ form.password.label }}: {{ form.password }} <br/>
+    <input type="submit" value="Log In">
+    {{ form.username.errors }}
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+</form>
+{% endblock %}

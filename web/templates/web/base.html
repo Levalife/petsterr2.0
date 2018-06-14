@@ -1,0 +1,41 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        PetsTerr | {% block page_title %}{% endblock %}
+    </title>
+
+    <link rel="stylesheet" href={% static "web/css/base.css" %}>
+    {% block page_css %}
+    {% endblock %}
+
+    {% block page_js %}
+    {% endblock %}
+</head>
+<body>
+
+<div class="main-menu-block">
+    <div class="logo"><a href="{% url 'web:index' %}">PetsTerr</a></div>
+    <ul>
+        <li><a href="{% url 'kennels:kennels_page' %}">Kennels and catteries</a></li>
+        {% if not hide_authentiation %}
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'users:profile_page' %}">Profile</a></li>
+                <li><a href="{% url 'users:logout_page' %}">Log Out</a></li>
+            {% else %}
+                <li><a href="{% url 'users:login_page' %}">Log In</a></li>
+                <li><a href="{% url 'users:signup_page' %}">Sign Up</a></li>
+            {% endif %}
+        {% endif %}
+    </ul>
+</div>
+<div class="main-content-block">
+    {% block page_content %}
+    {% endblock %}
+</div>
+</body>
+</html>
