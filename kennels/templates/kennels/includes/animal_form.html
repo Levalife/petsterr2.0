@@ -1,0 +1,5 @@
+<form action="{% url 'animals:animals_page' %}" method="post">
+    {% csrf_token %}
+    {{ animal_form.as_p }}
+    <input type="submit" content="Create">
+</form>

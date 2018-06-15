@@ -20,6 +20,7 @@ urlpatterns = [
     path('', include('web.urls', namespace='web')),
     path('base/', include('base.urls')),
     path('kennels/', include('kennels.urls', namespace='kennels')),
+    path('animals/', include('animals.urls', namespace='animals')),
     path('users/', include('users.urls', namespace='users')),
     path('countries/', include('countries.urls', namespace='countries')),
     path('clubs/', include('clubs.urls', namespace='clubs')),

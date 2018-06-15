@@ -68,5 +68,11 @@ class BaseAnimal(BaseModel):
         verbose_name = _('Animal')
         verbose_name_plural = _('Animals')
 
+    def humanize_type(self):
+        return dict(Kennel.TYPE_CHOICES).get(self.type)
+
+    def humanize_gender(self):
+        return dict(self.GENDER_CHOICES).get(self.gender)
+
     def __str__(self):
         return u'%s' % (self.full_name)

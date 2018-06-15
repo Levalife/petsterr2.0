@@ -1,0 +1,5 @@
+<form action="{% url 'animals:animal_page' 'Dog_Test_1_Male' %}" method="post">
+    {% csrf_token %}
+    {{ aform.as_p }}
+    <input type="submit" content="Create">
+</form>

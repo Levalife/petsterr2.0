@@ -3,6 +3,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic.base import View
 
+from animals.forms.CreateAnimalForm import CreateAnimalForm
+from animals.forms.EditAnimalForm import EditAnimalForm
 from kennels.KennelsHandler import KennelsHandler
 from kennels.forms.CreateKennelForm import CreateKennelForm
 
@@ -13,7 +15,12 @@ class KennelView(View):
     def get(self, request, *args, **kwargs):
         kennel = self.handler.get_by_slug(kwargs.get('slug'))
         if kennel:
-            context = {'kennel': kennel}
+            temporary_form = CreateAnimalForm
+            from animals.AnimalsHandler import AnimalsHandler
+            animals_handler = AnimalsHandler()
+            animal = animals_handler.get_by_slug('Dog_Test_1_Male')
+            temporary_form_2 = EditAnimalForm(animals_handler.humanize_animal(animal), type='dogs')
+            context = {'kennel': kennel, 'animal_form': temporary_form, 'aform': temporary_form_2}
             return render(request, 'kennels/kennel.html', context)
         else:
             raise Http404('Kennel does not exist')

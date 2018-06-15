@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from animals.models import BaseAnimal
+
+admin.site.register(BaseAnimal)

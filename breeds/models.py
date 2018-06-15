@@ -375,5 +375,8 @@ class Breed(BaseModel):
         verbose_name = 'Breed'
         verbose_name_plural = 'Breeds'
 
+    def humanize_title(self):
+        return dict(self.DOGS_CHOICES + self.CATS_CHOICES).get(self.title)
+
     def __str__(self):
         return u'%s' % dict(self.DOGS_CHOICES + self.CATS_CHOICES).get(self.title)

@@ -23,7 +23,7 @@ class Kennel(BaseModel):
     cover = models.ImageField(upload_to='kennels/covers/%Y/%m/%d', blank=True, null=True)
     slug = models.CharField(max_length=256, blank=True, null=True)
 
-    #country_club = models.ForeignKey('kennel_clubs.KennelClub', null=True, blank=True, on_delete=models.SET_NULL())
+    country_club = models.ForeignKey('clubs.CountryClub', null=True, blank=True, on_delete=models.SET_NULL)
     address = models.CharField(max_length=1024, blank=True, null=True)
     skype = models.CharField(blank=True, null=True, max_length=255)
     twitter = models.URLField(blank=True, null=True)
