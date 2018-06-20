@@ -5,6 +5,7 @@ from django.urls import reverse
 from easy_thumbnails.files import get_thumbnailer
 
 from clubs.CountryClubsHandler import CountryClubsHandler
+from contacts.ContactsHandler import ContactsHandler
 from countries.CountriesHandler import CountriesHandler
 from kennels.models import Kennel
 from petsterr.settings import KENNEL_COVER
@@ -14,6 +15,7 @@ class KennelsHandler:
     model_instance = Kennel
     clubs_hanlder = CountryClubsHandler()
     countries_handler = CountriesHandler()
+    contacts_handler = ContactsHandler()
 
     def get_all(self):
         return self.model_instance.objects.filter(is_deleted=False).order_by('title')
@@ -58,6 +60,8 @@ class KennelsHandler:
             else:
                 kennel.cover = None
         else:
+            phones_list = []
+            emails_list = []
             for key, value in data.items():
                 if value is not None:
                     if key == 'country_club':
@@ -85,10 +89,42 @@ class KennelsHandler:
                         # timezone
                         # country = self.countries_handler.get_by_code(country_code)
                         # kennel.country = country
+                    elif key.startswith('email'):
+                        emails_list.append(value)
+                    elif key.startswith('phone'):
+                        phones_list.append(value)
                     else:
                         kennel.__dict__[key] = value
 
-                    kennel.save()
+            data = dict(type=self.contacts_handler.model_instance.TYPE_KENNEL, source_id=kennel.id)
+            contact = self.contacts_handler.get_by_type_source_id(data)
+            if not contact:
+                self.contacts_handler.create(data)
+            phones = self.contacts_handler.phones_handler.get_all_by_contact(contact)
+            emails = self.contacts_handler.emails_handler.get_all_by_contact(contact)
+            for number in phones:
+                phone_number = self.contacts_handler.dump_phone_number(number.phone)
+                if phone_number in phones_list:
+                    del phones_list[phones_list.index(phone_number)]
+                else:
+                    # delete phone number if it was replaced by another one
+                    self.contacts_handler.phones_handler.delete(number.id)
+            for phone in phones_list:
+                if phone:
+                    data = dict(phone=phone, contact=contact)
+                    self.contacts_handler.phones_handler.create(data)
+
+            for email_item in emails:
+                if email_item.email in emails_list:
+                    del emails_list[emails_list.index(email_item.email)]
+                else:
+                    self.contacts_handler.emails_handler.delete(email_item.id)
+            for email in emails_list:
+                if email:
+                    data = dict(email=email, contact=contact)
+                    self.contacts_handler.emails_handler.create(data)
+
+            kennel.save()
             return kennel
 
     def dump(self, kennel):
@@ -122,8 +158,8 @@ class KennelsHandler:
             if kennel.country_club.club_association:
                 plain_data['club_as'] = kennel.country_club.club_association.title
 
-        # plain_data['contacts'] = self.contact_handler.dump_get_contact_by_type_source(
-        #     self.contact_handler.factory.mapping.model_class.TYPE_KENNEL, kennel.id)
+        plain_data['contacts'] = self.contacts_handler.dump_get_contact_by_type_source(
+            self.contacts_handler.model_instance.TYPE_KENNEL, kennel.id)
         return plain_data
 
     def delete(self, slug):

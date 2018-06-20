@@ -4,3 +4,4 @@ bs4
 #django-location-field
 django-geoposition
 requests
+django-phonenumber-field

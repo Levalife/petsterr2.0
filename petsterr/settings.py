@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'breeds.apps.BreedsConfig',
     'clubs.apps.ClubsConfig',
     'countries.apps.CountriesConfig',
+    'contacts.apps.ContactsConfig',
     'kennels.apps.KennelsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
