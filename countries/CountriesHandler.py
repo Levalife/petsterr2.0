@@ -14,4 +14,7 @@ class CountriesHandler(BaseHandler):
         return country
 
     def get_by_title(self, title):
-        return self.model_instance.objects.get(title=title)
+        return self.model_instance.objects.get(title=title, is_deleted=False)
+
+    def get_by_code(self, code):
+        return self.model_instance.objects.get(code=code, is_deleted=False)

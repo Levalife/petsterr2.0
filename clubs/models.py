@@ -17,6 +17,7 @@ class ClubsAssociation(BaseModel):
          verbose_name = _('Clubs Association')
          verbose_name_plural = _('Clubs Associations')
 
+
      def __str__(self):
          return u'{}, {}'.format(self.id, self.title)
 

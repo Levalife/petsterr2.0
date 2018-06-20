@@ -127,3 +127,29 @@ class AnimalsHandler(BaseHandler):
                 slug += str(random.randint(0, 10000))
             else:
                 return slug
+
+    def dump_animals(self, kennel_data, kennel):
+        animals = self.get_all_by_params(dict(kennel_live=kennel,
+                                              deathday=None,
+                                              gender=self.model_instance.GENDER_MALE))
+        kennel_data['male'] = self.dump_items(animals)
+
+        animals = self.get_all_by_params(dict(kennel_live=kennel,
+                                              deathday=None,
+                                              gender=self.model_instance.GENDER_FEMALE))
+        kennel_data['female'] = self.dump_items(animals)
+
+        animals = self.get_all_by_params(dict(kennel_of_birth=kennel))
+        kennel_data['offsprings'] = self.dump_items(animals)
+
+        breeds = []
+        animals = kennel_data['male'] + kennel_data['female']
+        for animal in animals:
+            if animal.get('breed') not in animals and animal.get('breed'):
+                breeds.append(animal.get('breed'))
+        kennel_data['breeds'] = ', '.join(breeds)
+
+        return kennel_data
+
+    def dump_items(self, animals):
+        return [self.humanize_animal(animal) for animal in animals]

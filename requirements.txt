@@ -1,3 +1,6 @@
 django
 pillow
 bs4
+#django-location-field
+django-geoposition
+requests
