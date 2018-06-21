@@ -8,6 +8,7 @@ from clubs.CountryClubsHandler import CountryClubsHandler
 from contacts.ContactsHandler import ContactsHandler
 from countries.CountriesHandler import CountriesHandler
 from kennels.models import Kennel
+from news.NewsHandler import NewsHandler
 from petsterr.settings import KENNEL_COVER
 
 
@@ -16,6 +17,7 @@ class KennelsHandler:
     clubs_hanlder = CountryClubsHandler()
     countries_handler = CountriesHandler()
     contacts_handler = ContactsHandler()
+    news_handler = NewsHandler()
 
     def get_all(self):
         return self.model_instance.objects.filter(is_deleted=False).order_by('title')
@@ -160,6 +162,9 @@ class KennelsHandler:
 
         plain_data['contacts'] = self.contacts_handler.dump_get_contact_by_type_source(
             self.contacts_handler.model_instance.TYPE_KENNEL, kennel.id)
+
+        # data = dict(source_id=kennel.id, type=self.news_handler.model_instance.TYPE_KENNEL)
+        # plain_data['news'] = self.news_handler.get_news_by_params(data)
         return plain_data
 
     def delete(self, slug):

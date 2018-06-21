@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'countries.apps.CountriesConfig',
     'contacts.apps.ContactsConfig',
     'kennels.apps.KennelsConfig',
+    'news.apps.NewsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

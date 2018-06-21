@@ -1,0 +1,5 @@
+<form action="{% url 'news:news_page' %}" method="post">
+    {% csrf_token %}
+    {{ news_form.as_p }}
+    <input type="submit" content="Create">
+</form>

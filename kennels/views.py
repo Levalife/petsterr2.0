@@ -9,6 +9,7 @@ from animals.forms.EditAnimalForm import EditAnimalForm
 from kennels.KennelsHandler import KennelsHandler
 from kennels.forms.EditKennelForm import EditKennelForm
 from kennels.forms.CreateKennelForm import CreateKennelForm
+from news.forms.CreateNewsForm import CreateNewsForm
 
 
 class KennelView(View):
@@ -24,7 +25,9 @@ class KennelView(View):
             animals_handler = AnimalsHandler()
             animal = animals_handler.get_by_slug('Dog_Test_1_Male')
             temporary_form_2 = EditAnimalForm(animals_handler.humanize_animal(animal), type='dogs')
+            news_form = CreateNewsForm
             context = {'kennel': kennel, 'animal_form': temporary_form, 'aform': temporary_form_2,
+                       'news_form': news_form,
                        'form': self.form_class(self.handler.dump(kennel), kennel_id=kennel.id)}
             return render(request, 'kennels/kennel.html', context)
         else:

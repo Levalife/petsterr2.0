@@ -24,5 +24,6 @@ urlpatterns = [
     path('users/', include('users.urls', namespace='users')),
     path('countries/', include('countries.urls', namespace='countries')),
     path('clubs/', include('clubs.urls', namespace='clubs')),
+    path('news/', include('news.urls', namespace='news')),
     path('admin/', admin.site.urls),
 ]

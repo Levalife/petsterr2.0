@@ -5,7 +5,7 @@ from .models import Kennel
 
 class KennelAdmin(admin.ModelAdmin):
     #fields = ['title', 'type']
-    list_display = ('title', 'type')
+    list_display = ('id', 'title', 'type')
     list_filter = ['type']
     search_fields = ['title']
 
