@@ -17,8 +17,8 @@ class BreedsHandler(BaseHandler):
         breeds = self.model_instance.objects.filter(type=type, is_deleted=False).order_by('title')
         return ((breed.slug, breed.humanize_title()) for breed in breeds)
 
-    def get_breeds_by_params(self, params):
-        breeds = self.model_instance.objects.filter(is_deleted=False, **params).order_by('title')
+    def get_breeds_by_params(self, params, order_by='title'):
+        breeds = self.model_instance.objects.filter(is_deleted=False, **params).order_by(order_by)
         return breeds
 
     def get_by_slug(self, slug):

@@ -1,0 +1,5 @@
+<form action="{% url 'litters:litter_page' 'test_6_a' %}" method="post">
+    {% csrf_token %}
+    {{ elform.as_p }}
+    <input type="submit" content="Create">
+</form>

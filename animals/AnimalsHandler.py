@@ -29,8 +29,8 @@ class AnimalsHandler(BaseHandler):
         return self.model_instance.objects.filter(slug=slug, is_deleted=False).order_by('-created_at').first()
 
     def get_all_by_params(self, params, order_by='-created_at'):
-        params['is_deleted'] = False
-        return self.model_instance.objects.filter(**params).order_by(order_by)
+        # params['is_deleted'] = False
+        return self.model_instance.objects.filter(**params, is_deleted=False).order_by(order_by)
 
     def get_all_by_params_json(self, params, order_by='-created_at'):
         if params.get('kennel_live', None):
@@ -131,12 +131,12 @@ class AnimalsHandler(BaseHandler):
     def dump_animals(self, kennel_data, kennel):
         animals = self.get_all_by_params(dict(kennel_live=kennel,
                                               deathday=None,
-                                              gender=self.model_instance.GENDER_MALE))
+                                              gender=self.model_instance.GENDER_MALE, is_deleted=False))
         kennel_data['male'] = self.dump_items(animals)
 
         animals = self.get_all_by_params(dict(kennel_live=kennel,
                                               deathday=None,
-                                              gender=self.model_instance.GENDER_FEMALE))
+                                              gender=self.model_instance.GENDER_FEMALE, is_deleted=False))
         kennel_data['female'] = self.dump_items(animals)
 
         animals = self.get_all_by_params(dict(kennel_of_birth=kennel))

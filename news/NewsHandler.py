@@ -16,6 +16,10 @@ class NewsHandler(BaseHandler):
     def get_news_by_params(self, params, order_by='-created_at'):
         return self.model_instance.objects.filter(**params, is_deleted=False).order_by(order_by)
 
+    def get_dump_news_by_params(self, params, order_by='-created_at'):
+        news_list = self.get_news_by_params(params, order_by)
+        return [self.dump(news) for news in news_list]
+
     def delete(self, id):
         try:
             news = self.model_instance.objects.get(id=id)

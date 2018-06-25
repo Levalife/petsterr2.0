@@ -1,0 +1,5 @@
+<form action="{% url 'litters:litters_page' %}" method="post">
+    {% csrf_token %}
+    {{ litter_form.as_p }}
+    <input type="submit" content="Create">
+</form>

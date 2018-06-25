@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'web.apps.WebConfig',
     'users.apps.UsersConfig',
     'animals.apps.AnimalsConfig',
+    'litters.apps.LittersConfig',
     'breeds.apps.BreedsConfig',
     'clubs.apps.ClubsConfig',
     'countries.apps.CountriesConfig',

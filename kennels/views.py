@@ -9,12 +9,16 @@ from animals.forms.EditAnimalForm import EditAnimalForm
 from kennels.KennelsHandler import KennelsHandler
 from kennels.forms.EditKennelForm import EditKennelForm
 from kennels.forms.CreateKennelForm import CreateKennelForm
+from litters.LittersHandler import LittersHandler
+from litters.forms.CreateLitterForm import CreateLitterForm
+from litters.forms.EditLitterForm import EditLitterForm
 from news.forms.CreateNewsForm import CreateNewsForm
 
 
 class KennelView(View):
     handler = KennelsHandler()
     animals_handler = AnimalsHandler()
+    litters_handler = LittersHandler()
     form_class = EditKennelForm
 
     def get(self, request, *args, **kwargs):
@@ -24,10 +28,13 @@ class KennelView(View):
             from animals.AnimalsHandler import AnimalsHandler
             animals_handler = AnimalsHandler()
             animal = animals_handler.get_by_slug('Dog_Test_1_Male')
-            temporary_form_2 = EditAnimalForm(animals_handler.humanize_animal(animal), type='dogs')
+            temporary_form_2 = EditAnimalForm(animals_handler.humanize_animal(animal), type=kennel.type)
             news_form = CreateNewsForm
+            litter_form = CreateLitterForm
+            litter = self.litters_handler.get_by_slug('test_6_a')
+            edit_litter_form = EditLitterForm(self.litters_handler.dump(litter), type=kennel.type)
             context = {'kennel': kennel, 'animal_form': temporary_form, 'aform': temporary_form_2,
-                       'news_form': news_form,
+                       'news_form': news_form, 'litter_form': litter_form, 'elform': edit_litter_form,
                        'form': self.form_class(self.handler.dump(kennel), kennel_id=kennel.id)}
             return render(request, 'kennels/kennel.html', context)
         else:

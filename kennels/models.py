@@ -51,4 +51,4 @@ class Kennel(BaseModel):
     #     return super(Kennel, self).save(*args, **kwargs)
 
     def __str__(self):
-        return u'Title [%s] | Owner [%s] | ID [%s]' % (self.title, self.owner.email, self.id)
+        return u'Title [%s] | Owner [%s] | ID [%s]' % (self.title, self.owner, self.id)

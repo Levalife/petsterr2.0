@@ -23,14 +23,13 @@ class KennelsHandler:
         return self.model_instance.objects.filter(is_deleted=False).order_by('title')
 
     def get_by_id(self, id):
-        return self.model_instance.objects.get(id=id)
+        return self.model_instance.objects.get(id=id, is_deleted=False)
 
     def get_by_slug(self, slug):
-        return self.model_instance.objects.filter(slug=slug).first()
+        return self.model_instance.objects.filter(slug=slug, is_deleted=False).order_by('-created_at').first()
 
     def get_all_by_params(self, params, order_by='-created_at'):
-        params['is_deleted'] = False
-        return self.model_instance.objects.filter(**params).order_by(order_by)
+        return self.model_instance.objects.filter(**params, is_deleted=False).order_by(order_by)
 
     def create(self, user, data):
         try:
