@@ -7,10 +7,16 @@ class TopMenu extends Component {
             <div className="main-menu-block">
                 <div className="logo"><a href="/">PetsTerr</a></div>
                 <ul>
+
+
                     <li><Link maintainScrollPosition={false} to={{
                         pathname: '/kennels',
                         state: {fromDashboard: false}
                     }}>Kennels and catteries</Link></li>
+                    <li><Link maintainScrollPosition={false} to={{
+                        pathname: '/login',
+                        state: {fromDashboard: false}
+                    }}>Log In</Link></li>
                     {}
                     {/*<li><a href="{% url 'users:profile_page' %}">Profile</a></li>*/}
                     {/*<li><a href="{% url 'users:logout_page' %}">Log Out</a></li>*/}

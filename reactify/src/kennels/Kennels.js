@@ -111,6 +111,7 @@ class Kennels extends Component {
         const {registered_user} = this.state;
         const {next} = this.state;
 
+
         return (
             <div>
                 {registered_user === true ? <Link className='mr-2' maintainScrollPosition={false} to={{
