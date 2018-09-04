@@ -1,4 +1,4 @@
-import { USER_LOGGED_IN } from '../types';
+import { USER_LOGGED_IN, USER_LOGGED_OUT } from '../types';
 import api from '../api';
 
 
@@ -9,6 +9,18 @@ export const userLoggedIn = (user) => ({
     user
 });
 
+export const userLoggedOut = () => ({
+    type: USER_LOGGED_OUT
+});
+
 export const login = credentials => dispatch =>
     // make request and then    get user data and dispatch action which will change redux store
-    api.user.login(credentials).then(user => dispatch(userLoggedIn(user))); // function which returns another function
+    api.user.login(credentials).then(user => {
+        localStorage.tokenJWT = user.token;
+        dispatch(userLoggedIn(user))
+    }); // function which returns another function
+
+export const logout = () => dispatch => {
+        localStorage.removeItem('tokenJWT');
+        dispatch(userLoggedOut())
+    }; // function which returns another function
