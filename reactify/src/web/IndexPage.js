@@ -5,7 +5,6 @@ class IndexPage extends Component {
     render() {
         return (
             <div>
-                <TopMenu />
                 <h1>Hello world, its index page</h1>
 
             </div>
