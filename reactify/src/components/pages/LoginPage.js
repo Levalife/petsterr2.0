@@ -7,7 +7,7 @@ import { login } from '../../actions/auth';
 
 class LoginPage extends Component {
     // login after which                      redirect to homepage
-    submit = (data) => this.props.login(data).then(() => this.props.history.push('/'));
+    submit = (data) => this.props.login(data).then(() => this.props.history.push('/dashboard'));
 
     render() {
         return (
