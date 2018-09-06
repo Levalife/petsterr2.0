@@ -1,24 +1,21 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {Form, Button, Message} from 'semantic-ui-react';
-import Validator from 'validator';
+import isEmail from 'validator/lib/isEmail';
 import InlineError from '../messages/InlineError';
 import PropTypes from 'prop-types';
+import parseErrors from '../utils/parseErrors';
+import _ from 'lodash';
 
-class LoginForm extends Component {
+class SignupForm extends React.Component {
     state = {
         data: {
-            email: "",
-            password: ""
+            email: '',
+            // email2: '',
+            password: '',
         },
         loading: false,
         errors: {}
     };
-
-    onChange = e =>
-        this.setState({
-            data: {...this.state.data, [e.target.name]: e.target.value}
-        });
-
 
     onSubmit = (e) => {
         e.preventDefault();
@@ -26,30 +23,36 @@ class LoginForm extends Component {
         this.setState({errors});
         if (Object.keys(errors).length === 0) {
             this.setState({loading: true});
-
             this.props
                 .submit(this.state.data)
-                .catch(err => this.setState({errors: {global: err.response.data.non_field_errors}, loading: false}));
+                .catch(err => this.setState({errors: {global: parseErrors(err.response.data)} , loading: false}))
         }
     };
 
-    validate = (data) => {
+    validate = data => {
         const errors = {};
-        if (!data.email) errors.email = "Can't be blank";
-        if (!Validator.isEmail(data.email)) errors.email = "Invalid email";
-        if (!data.password) errors.password = "Can't be blank";
-        return errors
+        if (!isEmail(data.email)) errors.email = 'Invalid email';
+        // if (!isEmail(data.email2)) errors.email2 = 'Invalid email';
+        if (!data.password) errors.password = "Can't be blanc";
+
+        return errors;
     };
 
+    onChange = e =>
+        this.setState({
+            data: {...this.state.data, [e.target.name]: e.target.value}
+        });
+
     render() {
-        const {data, errors, loading} = this.state;
+        const {data, loading, errors} = this.state;
+
         return (
             <Form onSubmit={this.onSubmit} loading={loading}>
                 {errors.global && (<Message negative>
                     <Message.Header>Something went wrong</Message.Header>
-                    {errors.global.map(function (text, index) {
-                    return <p>{text}</p>;
-                })}
+                    {_.forEach(errors.global, (val, index) => {
+                        return <p>{val}</p>
+                    })}
                 </Message>)}
                 <Form.Field error={!!errors.email}>
                     <label htmlFor="email">Email</label>
@@ -62,6 +65,17 @@ class LoginForm extends Component {
                         onChange={this.onChange}/>
                     {errors.email && <InlineError text={errors.email}/>}
                 </ Form.Field>
+                {/*<Form.Field error={!!errors.email2}>*/}
+                    {/*<label htmlFor="email2">Email confirmation</label>*/}
+                    {/*<input*/}
+                        {/*type="email"*/}
+                        {/*id="email2"*/}
+                        {/*name="email2"*/}
+                        {/*placeholder="Repeat email"*/}
+                        {/*value={data.email2}*/}
+                        {/*onChange={this.onChange}/>*/}
+                    {/*{errors.email2 && <InlineError text={errors.email2}/>}*/}
+                {/*</ Form.Field>*/}
                 <Form.Field error={!!errors.password}>
                     <label htmlFor="password">Password</label>
                     <input
@@ -74,16 +88,15 @@ class LoginForm extends Component {
                     {errors.password && <InlineError text={errors.password}/>}
 
                 </ Form.Field>
-                <Button primary>Login</Button>
-            </Form>
 
+                <Button primary>Sign Up</Button>
+            </Form>
         );
     }
 }
 
-LoginForm.propTypes = {
-    submit: PropTypes.func.isRequired,
+SignupForm.propTypes = {
+    submit: PropTypes.func.isRequired
 };
 
-
-export default LoginForm;
+export default SignupForm;

@@ -8,6 +8,8 @@ export default {
     user: {
                                 // api requset return                               promise and then get request data
         login: (credentials) => axios.post('/api/v1/users/login/',
-            { username: credentials.username, password: credentials.password }).then(res => res.data)
+            { email: credentials.email, password: credentials.password }).then(res => res.data),
+        signup: (user) => axios.post('/api/v1/users/register/',
+            { email: user.email, email2: user.email2, password: user.password }).then(res => res.data)
     }
 }
