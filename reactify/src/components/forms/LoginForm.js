@@ -3,6 +3,7 @@ import {Form, Button, Message} from 'semantic-ui-react';
 import Validator from 'validator';
 import InlineError from '../messages/InlineError';
 import PropTypes from 'prop-types';
+import _ from "lodash";
 
 class LoginForm extends Component {
     state = {
@@ -29,7 +30,7 @@ class LoginForm extends Component {
 
             this.props
                 .submit(this.state.data)
-                .catch(err => this.setState({errors: {global: err.response.data.non_field_errors}, loading: false}));
+                .catch(err => this.setState({errors: {global: err.response.data}, loading: false}));
         }
     };
 
@@ -47,9 +48,9 @@ class LoginForm extends Component {
             <Form onSubmit={this.onSubmit} loading={loading}>
                 {errors.global && (<Message negative>
                     <Message.Header>Something went wrong</Message.Header>
-                    {errors.global.map(function (text, index) {
-                    return <p>{text}</p>;
-                })}
+                    {_.forEach(errors.global, (val, index) => {
+                        return <p>{val}</p>
+                    })}
                 </Message>)}
                 <Form.Field error={!!errors.email}>
                     <label htmlFor="email">Email</label>
