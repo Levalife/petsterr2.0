@@ -1,80 +1,79 @@
-from django.http import HttpResponse, Http404, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
-from django.urls import reverse
-from django.views.generic.base import View
+# FOR REFERENCES
 
-from animals.AnimalsHandler import AnimalsHandler
-from animals.forms.CreateAnimalForm import CreateAnimalForm
-from animals.forms.EditAnimalForm import EditAnimalForm
-from kennels.KennelsHandler import KennelsHandler
-from kennels.forms.EditKennelForm import EditKennelForm
-from kennels.forms.CreateKennelForm import CreateKennelForm
-from litters.LittersHandler import LittersHandler
-from litters.forms.CreateLitterForm import CreateLitterForm
-from litters.forms.EditLitterForm import EditLitterForm
-from news.forms.CreateNewsForm import CreateNewsForm
-
-
-class KennelView(View):
-    handler = KennelsHandler()
-    animals_handler = AnimalsHandler()
-    litters_handler = LittersHandler()
-    form_class = EditKennelForm
-
-    def get(self, request, *args, **kwargs):
-        kennel = self.handler.get_by_slug(kwargs.get('slug'))
-        if kennel:
-            temporary_form = CreateAnimalForm
-            from animals.AnimalsHandler import AnimalsHandler
-            animals_handler = AnimalsHandler()
-            animal = animals_handler.get_by_slug('Dog_Test_1_Male')
-            temporary_form_2 = EditAnimalForm(animals_handler.humanize_animal(animal), type=kennel.type)
-            news_form = CreateNewsForm
-            litter_form = CreateLitterForm
-            litter = self.litters_handler.get_by_slug('test_6_a')
-            edit_litter_form = EditLitterForm(self.litters_handler.dump(litter), type=kennel.type)
-            context = {'kennel': kennel, 'animal_form': temporary_form, 'aform': temporary_form_2,
-                       'news_form': news_form, 'litter_form': litter_form, 'elform': edit_litter_form,
-                       'form': self.form_class(self.handler.dump(kennel), kennel_id=kennel.id)}
-            return render(request, 'kennels/kennel.html', context)
-        else:
-            raise Http404('Kennel does not exist')
-
-    def post(self, request, *args, **kwargs):
-        kennel = self.handler.get_by_slug(kwargs.get('slug'))
-        form = self.form_class(request.POST, kennel_id=kennel.id)
-        if form.is_valid():
-            kennel = self.handler.update_kennel(kennel, form.cleaned_data)
-            kennel_data = self.handler.dump(kennel)
-            kennel_data = self.animals_handler.dump_animals(kennel_data, kennel)
-            return JsonResponse(dict(result=True, kennel=kennel_data))
-        return JsonResponse(dict(result=False, form=form))
-
-    def delete(self, request, *args, **kwargs):
-        slug = kwargs['slug']
-        try:
-            self.handler.delete(slug)
-            return JsonResponse(dict(result=True))
-        except Exception as e:
-            return JsonResponse(dict(result=False, error_message=e))
-
-
-
-class KennelsView(View):
-    handler = KennelsHandler()
-    form_class = CreateKennelForm
-
-    def get(self, request, *args, **kwargs):
-        kennels_list = self.handler.get_all()
-        context = {'kennels_list': kennels_list, 'form': self.form_class}
-        return render(request, 'kennels/kennels.html', context)
-
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            kennel = self.handler.create(request.user, form.cleaned_data)
-            return HttpResponseRedirect(reverse('kennels:kennel_page', args=(kennel.slug,)))
-        kennels_list = self.handler.get_all()
-        context = {'kennels_list': kennels_list, 'form': form}
-        return render(request, 'kennels/kennels.html', context)
+# from django.utils.translation import ugettext_lazy as _
+# from rest_framework import status, permissions, pagination, generics
+# from rest_framework.generics import GenericAPIView
+# from rest_framework.response import Response
+# from animals.AnimalsHandler import AnimalsHandler
+# from kennels.KennelsHandler import KennelsHandler
+# from kennels.api.permissions import IsOwnerOrReadOnly
+# from kennels.api.serializers import KennelSerializer
+# from litters.LittersHandler import LittersHandler
+#
+#
+# class KennelPageNumberPagination(pagination.PageNumberPagination):
+#     page_size = 10
+#     page_size_query_param = 'size'
+#     max_page_size = 20
+#
+#     def get_paginated_response(self, data):
+#         registered_user = False
+#         user = self.request.user
+#         if user.is_authenticated:
+#             registered_user = True
+#         context = {
+#             'next': self.get_next_link(),
+#             'previous': self.get_previous_link(),
+#             'count': self.page.paginator.count,
+#             'registered_user': registered_user,
+#             'results': data
+#         }
+#         return Response(context)
+#
+#
+# class KennelView(GenericAPIView):
+#     handler = KennelsHandler()
+#     animals_handler = AnimalsHandler()
+#     litters_handler = LittersHandler()
+#     permission_classes = (permissions.IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly,)
+#
+#     def get(self, request, *args, **kwargs):
+#         kennel = self.handler.get_by_slug(kwargs.get('slug'))
+#         if kennel:
+#             serializer = KennelSerializer(kennel, context=dict(request=request))
+#             return Response(dict(result=True, kennel=serializer.data))
+#         return Response(dict(result=False, detail=_('Not Found')), status=status.HTTP_404_NOT_FOUND)
+#
+#     def put(self, request, format=None, *args, **kwargs):
+#         kennel = self.handler.get_by_slug(kwargs.get('slug'))
+#         serializer = KennelSerializer(kennel, data=request.data, context=dict(request=request))
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(dict(result=True, kennel=serializer.data))
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#
+#     def delete(self, request, format=None, *args, **kwargs):
+#         kennel = self.handler.get_by_slug(kwargs.get('slug'))
+#         kennel.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+#
+#
+# class KennelsView(generics.ListCreateAPIView):
+#     handler = KennelsHandler()
+#
+#     queryset            = handler.get_all()
+#     serializer_class    = KennelSerializer
+#     permission_classes  = [permissions.IsAuthenticatedOrReadOnly]
+#     pagination_class    = KennelPageNumberPagination
+#
+#     # def get(self, request, format=None, *args, **kwargs):
+#     #     kennels_list = self.handler.get_all()
+#     #     serializer = KennelSerializer(kennels_list, many=True, context=dict(request=request))
+#     #     return Response(dict(result=True, kennels=serializer.data))
+#
+#     def post(self, request, format=None, *args, **kwargs):
+#         serializer = KennelSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save(owner=self.request.user)
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

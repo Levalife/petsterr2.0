@@ -50,7 +50,6 @@ class KennelAPIView(generics.ListCreateAPIView):
         return {"request": self.request}
 
 
-
 class KennelRUDView(generics.RetrieveUpdateDestroyAPIView):
     handler = KennelsHandler()
 

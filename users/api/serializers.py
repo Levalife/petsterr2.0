@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import jwt
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
@@ -14,47 +16,28 @@ class UserCreateSerializer(ModelSerializer):
     user_handler = UsersHandler()
 
     email = serializers.EmailField(label=_('Email address'))
-    email2 = serializers.EmailField(label=_('Confirm email'))
 
     class Meta:
         model = User
         fields = [
-            # 'username',
             'password',
             'email',
-            'email2'
         ]
 
         extra_kwargs = {"password":
                             {'write_only': True}}
 
     def validate(self, data):
-        # email = data.get('email')
-        # users_qs = self.user_handler.get_by_params(dict(email=email))
-        # if users_qs.exists():
-        #     raise ValidationError(_("This user has already been registered."))
         data['username'] = data['email']
         return data
 
     def validate_email(self, value):
-        data = self.get_initial()
         email1 = value
-        email2 = data.get("email2")
-        if email1 != email2:
-            raise ValidationError(_("Emails must match."))
 
         users_qs = self.user_handler.get_by_params(dict(email=email1))
         if users_qs.exists():
             raise ValidationError(_("This user has already been registered."))
 
-        return value
-
-    def validate_email2(self, value):
-        data = self.get_initial()
-        email1 = data.get("email")
-        email2 = value
-        if email1 != email2:
-            raise ValidationError(_("Emails must match."))
         return value
 
     def create(self, validated_data):
@@ -78,11 +61,10 @@ class UserLoginSerializer(ModelSerializer):
             'token'
         ]
 
-        extra_kwargs = {"password":
-                            {'write_only': True}}
+        # extra_kwargs = {"password":
+        #                     {'write_only': True}}
 
     def validate(self, data):
-        user_obj = None
         email = data.get('email', None)
         username = data.get('username', None)
         password = data.get('password', None)
@@ -99,8 +81,6 @@ class UserLoginSerializer(ModelSerializer):
         if user_obj:
             if not user_obj.check_password(password):
                 raise ValidationError(_("Incorrect credentials, please try again."))
-
-        # data["token"] = "SOME RANDOM TOKEN"
 
         return data
 
@@ -128,7 +108,6 @@ class UserChangePasswordSerializer(ModelSerializer):
 
     def validate_old_password(self, value):
         user = self.user_handler.get_by_id(self.context.get('request').user.id)
-        print(user.check_password('{}'.format(value)))
         if user.check_password('{}'.format(value)):
             return value
         raise ValidationError(_("Wrong password."))
@@ -149,3 +128,74 @@ class UserChangePasswordSerializer(ModelSerializer):
         if password1 != password2:
             raise ValidationError(_("Passwords must match."))
         return value
+
+
+class UserForgotPasswordSerializer(ModelSerializer):
+
+    email = serializers.EmailField(label=_('Email address'))
+
+    class Meta:
+        model = User
+        fields = [
+            'email',
+        ]
+
+
+class UserValidateTokenSerializer(ModelSerializer):
+    user_handler = UsersHandler()
+
+    token = serializers.CharField()
+
+    class Meta:
+        model = User
+        fields = [
+            'token',
+        ]
+
+    def validate_token(self, value):
+        try:
+            token_data = jwt.decode(value, settings.SECRET_KEY, algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise ValidationError("Signature has expired")
+        except jwt.InvalidSignatureError:
+            raise ValidationError("Invalid signature token")
+
+
+class UserResetPasswordSerializer(serializers.Serializer):
+
+    token = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    confirm_password = serializers.CharField(required=True)
+
+    class Meta:
+        fields = [
+            "token",
+            'new_password',
+            'confirm_password',
+        ]
+
+    def validate_new_password(self, value):
+        data = self.get_initial()
+        new_password = value
+        confirm_password = data.get("confirm_password")
+        if new_password != confirm_password:
+            raise ValidationError(_("Passwords must match."))
+
+        return value
+
+    def validate_confirm_password(self, value):
+        data = self.get_initial()
+        new_password = data.get("new_password")
+        confirm_password = value
+        if new_password != confirm_password:
+            raise ValidationError(_("Passwords must match."))
+        return value
+
+    def validate_token(self, value):
+        try:
+            jwt.decode(value, settings.SECRET_KEY, algorithms=['HS256'])
+            return value
+        except jwt.ExpiredSignatureError:
+            raise ValidationError("Signature has expired")
+        except jwt.InvalidSignatureError:
+            raise ValidationError("Invalid signature token")

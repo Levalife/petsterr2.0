@@ -15,16 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework_jwt.views import obtain_jwt_token
 
 urlpatterns = [
     path('', include('web.urls', namespace='web')),
     path('base/', include('base.urls')),
-    path('kennels/', include('kennels.urls', namespace='kennels')),
-    path('animals/', include('animals.urls', namespace='animals')),
-    path('litters/', include('litters.urls', namespace='litters')),
-    path('users/', include('users.urls', namespace='users')),
-    path('countries/', include('countries.urls', namespace='countries')),
-    path('clubs/', include('clubs.urls', namespace='clubs')),
-    path('news/', include('news.urls', namespace='news')),
     path('admin/', admin.site.urls),
+    path('api/kennels/', include('kennels.api.urls', namespace='kennels')),
+    path('api/animals/', include('animals.urls', namespace='animals')),
+    path('api/litters/', include('litters.urls', namespace='litters')),
+    path('api/v1/users/', include('users.api.urls', namespace='users')),
+    path('api/countries/', include('countries.urls', namespace='countries')),
+    path('api/clubs/', include('clubs.urls', namespace='clubs')),
+    path('api/news/', include('news.urls', namespace='news')),
+    path('api-auth/', include('rest_framework.urls')),
+    path('api-token-auth/', obtain_jwt_token)
+
 ]

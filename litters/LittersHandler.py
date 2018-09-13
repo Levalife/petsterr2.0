@@ -112,3 +112,6 @@ class LittersHandler(BaseHandler):
         #     self.gallery_handler.get_album('litter', item.id) else dict(images=[], images_preview=[])
         # plain_data['album'].get('images').insert(0, dict(id='', url=plain_data['photo']))
         return plain_data
+
+
+

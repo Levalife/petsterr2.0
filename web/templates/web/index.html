@@ -7,11 +7,13 @@
 {% endblock %}
 
 {% block page_css %}
-        <link rel="stylesheet" href={% static "web/css/index.css" %}>
+    <link rel="stylesheet" href={% static "web/css/index.css" %}>
 {% endblock %}
 
 {% block page_content %}
-    <div class="index-page-content">
-    Hello, world. You're at the kennels/catteries constructorsite.
-    </div>
+{#    <div class="index-page-content">#}
+{#        Hello, world. You're at the kennels/catteries constructorsite.#}
+{#    </div>#}
+    <div id='reactify-django-ui'></div>
+
 {% endblock %}

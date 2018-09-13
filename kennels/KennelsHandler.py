@@ -10,6 +10,7 @@ from countries.CountriesHandler import CountriesHandler
 from kennels.models import Kennel
 from news.NewsHandler import NewsHandler
 from petsterr.settings import KENNEL_COVER
+from PIL import Image
 
 
 class KennelsHandler:
@@ -19,8 +20,8 @@ class KennelsHandler:
     contacts_handler = ContactsHandler()
     news_handler = NewsHandler()
 
-    def get_all(self):
-        return self.model_instance.objects.filter(is_deleted=False).order_by('title')
+    def get_all(self, order_by='title'):
+        return self.model_instance.objects.filter(is_deleted=False).order_by(order_by)
 
     def get_by_id(self, id):
         return self.model_instance.objects.get(id=id, is_deleted=False)
@@ -41,11 +42,11 @@ class KennelsHandler:
             print(e)
 
     def update_kennel(self, kennel, data):
-        if data.get('type') == 'cover':
-            if data.get('cover', None):
+        # if data.get('type') == 'cover':
+            # if data.get('cover', None):
                 # img_io = StringIO.StringIO()
-                from PIL import Image
-                img = Image.open(data['cover'])
+                # from PIL import Image
+                # img = Image.open(data['cover'])
                 # image_object = self.image_factory.get_by_id(data['cover'])
                 # img = Image.open(image_object.image)
 
@@ -57,81 +58,86 @@ class KennelsHandler:
                 # img = img.crop((x, y, x + w, y + h))
                 # img.save(img_io, format='JPEG', quality=100)
                 # img_content = ContentFile(img_io.getvalue(), '%s' % data['cover'])
-                kennel.cover = img
+                # kennel.cover = img
+            # else:
+            #     kennel.cover = None
+        # else:
+        # img = Image.open(data['cover'])
+        if data['cover']:
+            kennel.cover = data['cover']
+
+        phones_list = []
+        emails_list = []
+        for key, value in data.items():
+            if value is not None:
+                if key == 'country_club':
+                    # TODO: check __dict__[key] update
+                    item = self.clubs_hanlder.get_by_id(value)
+                    kennel.country_club = item
+
+                # elif key == 'address':
+                    # TODO: get country from position
+                    # kennel.coordinates = 'POINT(%s %s)' % (data.get('longitude'), data.get('latitude'))
+                    # kennel.position = "%s,%s" % (data.get('latitude'), data.get('longitude'))
+                    # kennel.address = data.get('address', None)
+                    # country_title = ''
+                    # country_code = ''
+                    # city_title = ''
+                    # response = requests.get(
+                    #     "http://maps.googleapis.com/maps/api/geocode/json?latlng={0},{1}&sensor=true".format(
+                    #         data.get('latitude'), data.get('longitude')))
+                    # for result in response.json().get('results')[0].get('address_components'):
+                    #     if 'country' in result.get('types'):
+                    #         country_title = result.get('long_name')
+                    #         country_code = result.get('short_name')
+                    #     if 'locality' in result.get('types'):
+                    #         city_title = result.get('long_name')
+                    # timezone
+                    # country = self.countries_handler.get_by_code(country_code)
+                    # kennel.country = country
+                elif key.startswith('email'):
+                    emails_list.append(value)
+                elif key.startswith('phone'):
+                    phones_list.append(value)
+                else:
+                    kennel.__dict__[key] = value
+
+        data = dict(type=self.contacts_handler.model_instance.TYPE_KENNEL, source_id=kennel.id)
+        contact = self.contacts_handler.get_by_type_source_id(data)
+        if not contact:
+            self.contacts_handler.create(data)
+        phones = self.contacts_handler.phones_handler.get_all_by_contact(contact)
+        emails = self.contacts_handler.emails_handler.get_all_by_contact(contact)
+        for number in phones:
+            phone_number = self.contacts_handler.dump_phone_number(number.phone)
+            if phone_number in phones_list:
+                del phones_list[phones_list.index(phone_number)]
             else:
-                kennel.cover = None
-        else:
-            phones_list = []
-            emails_list = []
-            for key, value in data.items():
-                if value is not None:
-                    if key == 'country_club':
-                        # TODO: check __dict__[key] update
-                        item = self.clubs_hanlder.get_by_id(value)
-                        kennel.country_club = item
+                # delete phone number if it was replaced by another one
+                self.contacts_handler.phones_handler.delete(number.id)
+        for phone in phones_list:
+            if phone:
+                data = dict(phone=phone, contact=contact)
+                self.contacts_handler.phones_handler.create(data)
 
-                    # elif key == 'address':
-                        # TODO: get country from position
-                        # kennel.coordinates = 'POINT(%s %s)' % (data.get('longitude'), data.get('latitude'))
-                        # kennel.position = "%s,%s" % (data.get('latitude'), data.get('longitude'))
-                        # kennel.address = data.get('address', None)
-                        # country_title = ''
-                        # country_code = ''
-                        # city_title = ''
-                        # response = requests.get(
-                        #     "http://maps.googleapis.com/maps/api/geocode/json?latlng={0},{1}&sensor=true".format(
-                        #         data.get('latitude'), data.get('longitude')))
-                        # for result in response.json().get('results')[0].get('address_components'):
-                        #     if 'country' in result.get('types'):
-                        #         country_title = result.get('long_name')
-                        #         country_code = result.get('short_name')
-                        #     if 'locality' in result.get('types'):
-                        #         city_title = result.get('long_name')
-                        # timezone
-                        # country = self.countries_handler.get_by_code(country_code)
-                        # kennel.country = country
-                    elif key.startswith('email'):
-                        emails_list.append(value)
-                    elif key.startswith('phone'):
-                        phones_list.append(value)
-                    else:
-                        kennel.__dict__[key] = value
+        for email_item in emails:
+            if email_item.email in emails_list:
+                del emails_list[emails_list.index(email_item.email)]
+            else:
+                self.contacts_handler.emails_handler.delete(email_item.id)
+        for email in emails_list:
+            if email:
+                data = dict(email=email, contact=contact)
+                self.contacts_handler.emails_handler.create(data)
 
-            data = dict(type=self.contacts_handler.model_instance.TYPE_KENNEL, source_id=kennel.id)
-            contact = self.contacts_handler.get_by_type_source_id(data)
-            if not contact:
-                self.contacts_handler.create(data)
-            phones = self.contacts_handler.phones_handler.get_all_by_contact(contact)
-            emails = self.contacts_handler.emails_handler.get_all_by_contact(contact)
-            for number in phones:
-                phone_number = self.contacts_handler.dump_phone_number(number.phone)
-                if phone_number in phones_list:
-                    del phones_list[phones_list.index(phone_number)]
-                else:
-                    # delete phone number if it was replaced by another one
-                    self.contacts_handler.phones_handler.delete(number.id)
-            for phone in phones_list:
-                if phone:
-                    data = dict(phone=phone, contact=contact)
-                    self.contacts_handler.phones_handler.create(data)
-
-            for email_item in emails:
-                if email_item.email in emails_list:
-                    del emails_list[emails_list.index(email_item.email)]
-                else:
-                    self.contacts_handler.emails_handler.delete(email_item.id)
-            for email in emails_list:
-                if email:
-                    data = dict(email=email, contact=contact)
-                    self.contacts_handler.emails_handler.create(data)
-
-            kennel.save()
-            return kennel
+        kennel.save()
+        return kennel
 
     def dump(self, kennel):
         plain_data = dict()
         plain_data['id'] = kennel.id
         plain_data['title'] = kennel.title
+        plain_data['type'] = kennel.type
         plain_data['slug'] = kennel.slug
         plain_data['about'] = kennel.about
         plain_data['cover'] = kennel.cover.url if kennel.cover else KENNEL_COVER

@@ -24,3 +24,12 @@ export const logout = () => dispatch => {
         localStorage.removeItem('tokenJWT');
         dispatch(userLoggedOut())
     }; // function which returns another function
+
+export const resetPasswordRequest = ({ email }) => () =>
+    api.user.forgotPasswordRequest(email);
+
+export const validateToken = (token) => () =>
+    api.user.validateTokenRequest(token);
+
+export const resetPassword = (data) => () =>
+    api.user.resetPasswordRequest(data);

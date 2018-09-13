@@ -50,21 +50,3 @@ class KennelTest(TestCase):
 
         self.assertTrue(kennel_1.is_deleted)
         self.assertFalse(kennel_2.is_deleted)
-
-
-from django.test import Client
-from django.urls import reverse
-
-class KennelViewTest(TestCase):
-    client = Client()
-    handler = KennelsHandler()
-
-    def test_get_kennel_view(self):
-        kennel_1 = self.handler.create(dict(title="test 1", type="dogs"))
-
-
-        response_1 = self.client.get(reverse('kennels:kennel_page', kwargs={"slug": "test_1"}))
-        self.assertEqual(response_1.status_code, 200)
-
-        response_2 = self.client.get(reverse('kennels:kennel_page', kwargs={"slug": "test_100000000000"}))
-        self.assertEqual(response_2.status_code, 404)

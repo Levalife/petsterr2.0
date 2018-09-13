@@ -13,7 +13,9 @@ class IndexView(View):
     kennels_handler = KennelsHandler()
 
     def get(self, request, *args, **kwargs):
+        registered_user = False
         if request.user.is_authenticated:
-            context = dict(kennels_list=self.kennels_handler.get_all())
-            return render(request, 'web/feed.html', context=context)
-        return render(request, 'web/index.html')
+            registered_user = True
+        context = dict(registered_user=registered_user)
+
+        return render(request, 'web/index.html', context=context)

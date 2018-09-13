@@ -1,11 +1,14 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import ForeignKey
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 # from geoposition.fields import GeopositionField
 # from django.contrib.gis.db import models as geo_models
 
 from base.models import BaseModel
+
+from rest_framework.reverse import reverse as api_reverse
 
 
 class Kennel(BaseModel):
@@ -52,3 +55,6 @@ class Kennel(BaseModel):
 
     def __str__(self):
         return u'Title [%s] | Owner [%s] | ID [%s]' % (self.title, self.owner, self.id)
+
+    def get_api_url(self, request=None):
+        return api_reverse('kennels:kennel_rud', kwargs={'slug': self.slug}, request=request)

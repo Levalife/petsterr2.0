@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class UserProfile(models.Model):
@@ -13,7 +15,7 @@ class UserProfile(models.Model):
         (GENDER_FEMALE, GENDER_FEMALE)
     )
 
-    user = models.OneToOneField(User, blank=True, null=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, blank=True, null=True, on_delete=models.CASCADE, related_name='profile')
     referral_code = models.CharField(max_length=255, blank=True, null=True, unique=True)
     locale = models.CharField(max_length=10, blank=True, null=True, default='en')
     date_of_birth = models.DateField(blank=True, null=True)
@@ -40,6 +42,8 @@ class UserProfile(models.Model):
 
     premium = models.BooleanField(default=False)
 
+    reset_token = models.CharField(blank=True, null=True, max_length=255)
+
     # def save(self, *args, **kwargs):
     #     if not self.referral_code and self.user:
     #         self.referral_code = self.user.id + int(''.join(random.choice(string.digits) for _ in range(5)))
@@ -55,5 +59,15 @@ class UserProfile(models.Model):
     class Meta:
         db_table = 'user_profiles'
 
+    # creates and updates model automatically if User object created or updated
+    @receiver(post_save, sender=User)
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            UserProfile.objects.create(user=instance)
+
+    @receiver(post_save, sender=User)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.profile.save()
+
     def __str__(self):
-        return "%s, id: %s" % (self.user_id, self.id)
+        return "%s, id: %s" % (self.user.email, self.id)

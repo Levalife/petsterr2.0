@@ -1,7 +1,11 @@
-django
+django==2.0.6
 pillow
 bs4
 #django-location-field
 django-geoposition
 requests
 django-phonenumber-field
+pytz==2018.4
+djangorestframework==3.8.2
+djangorestframework-jwt==1.11.0
+django-rest-auth==0.9.3

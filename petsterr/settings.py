@@ -30,6 +30,9 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'easy_thumbnails',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
     'base.apps.BaseConfig',
     'web.apps.WebConfig',
     'users.apps.UsersConfig',
@@ -41,6 +44,7 @@ INSTALLED_APPS = [
     'contacts.apps.ContactsConfig',
     'kennels.apps.KennelsConfig',
     'news.apps.NewsConfig',
+    'emails.apps.EmailsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -107,6 +111,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
@@ -124,8 +140,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 GEOPOSITION_GOOGLE_MAPS_API_KEY = "AIzaSyC7Hnq5PUuAym_jMjv4UXRHXp720Sbm9G0"
 
 KENNEL_COVER = STATIC_URL + 'img/kennel_cover.jpg'
+
+CSRF_COOKIE_NAME = "csrftoken"
+
+# https://mailtrap.io/
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_HOST_USER = '30a587aa499609'
+EMAIL_HOST_PASSWORD = '7920efe64385b4'
+EMAIL_PORT = '2525'
