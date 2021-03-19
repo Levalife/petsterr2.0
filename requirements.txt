@@ -6,6 +6,6 @@ django-geoposition
 requests
 django-phonenumber-field
 pytz==2018.4
-djangorestframework==3.8.2
+djangorestframework==3.11.2
 djangorestframework-jwt==1.11.0
 django-rest-auth==0.9.3
